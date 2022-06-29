@@ -54,7 +54,7 @@ class _MainPageState extends State<MainPage> {
         )),
       ),
       floatingActionButton: Visibility(
-        visible: hasData,
+        visible: !isSleeping && hasData,
         child: FloatingActionButton(
           onPressed: () => Navigator.push(
               context,

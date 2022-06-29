@@ -7,11 +7,13 @@ class BottomFloattingSpeechBubble extends StatelessWidget {
   const BottomFloattingSpeechBubble({
     required this.child,
     required this.texts,
+    required this.onEnd,
     Key? key,
   }) : super(key: key);
 
   final Widget child;
   final List<String> texts;
+  final Function onEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,7 @@ class BottomFloattingSpeechBubble extends StatelessWidget {
         child: SpeechBubble(
           texts,
           width: screenWidth - 40.0,
+          onEnd: onEnd,
         ),
       ),
     ]);
@@ -31,11 +34,13 @@ class BottomFloattingSpeechBubble extends StatelessWidget {
 }
 
 class SpeechBubble extends StatefulWidget {
-  const SpeechBubble(this.texts, {required this.width, Key? key})
+  const SpeechBubble(this.texts,
+      {required this.width, required this.onEnd, Key? key})
       : super(key: key);
 
   final List<String> texts;
   final double width;
+  final Function onEnd;
 
   @override
   State<SpeechBubble> createState() => _SpeechBubbleState();
@@ -67,12 +72,18 @@ class _SpeechBubbleState extends State<SpeechBubble> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (textIndex < widget.texts.length - 1) {
+        if (stringIndex < widget.texts[textIndex].length - 1) {
+          resetTimer();
+          stringIndex = widget.texts[textIndex].length - 1;
+          setState(() {});
+        } else if (textIndex < widget.texts.length - 1) {
           resetTimer();
           textIndex++;
           viewString = widget.texts[textIndex];
           stringIndex = viewString.isEmpty ? 0 : 1;
           setState(() {});
+        } else {
+          widget.onEnd();
         }
       },
       child: Container(

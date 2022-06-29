@@ -53,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: BottomFloattingSpeechBubble(
         texts: texts,
+        onEnd: () => debugPrint('吹き出し終了!'),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

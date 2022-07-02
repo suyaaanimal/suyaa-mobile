@@ -14,7 +14,7 @@ class SleepHistoryListPage extends StatefulWidget {
 class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
   final Map<DateTime, int> scores = {};
   final Map<DateTime, List<int>> levels = {};
-  final Map<DateTime, List<Map<String, dynamic>>> dairySleep = {};
+  final Map<DateTime, List<SerialSleep>> dairySleep = {};
   Future fetchData() async {
     final response = await get(Uri.parse("http://192.168.2.108:3000/testdata"));
     final jsonData = json.decode(response.body);
@@ -32,10 +32,25 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
           final day = DateTime(time.year, time.month, time.day);
           levels[day] ??= List.filled(48, 0);
           final index = time.hour * 2 + time.minute ~/ 30;
-          levels[day]![index] = levelJson['level'];
+          final level = levels[day]![index] = levelJson['level'];
 
           dairySleep[day] ??= [];
-          // final flag = index==0?levels[day.yesterday]?[47]:levels[day]![index-1];
+          final hasSleeped = ((index == 0)
+              ? ((levels[day.yesterday]?[47] ?? 0) > 0)
+              : ((levels[day]![index - 1]) > 0));
+          if (!hasSleeped) {
+            if (level > 0) {
+              dairySleep[day]!.add(SerialSleep(time, [level]));
+            } else {
+              dairySleep[day]!.add(SerialSleep(time, []));
+            }
+          } else {
+            if (index == 0) {
+              dairySleep[day]!.add(dairySleep[day.yesterday]!.last);
+              dairySleep[day.yesterday]!.removeLast();
+            }
+            dairySleep[day]!.last.levels.add(level);
+          }
         }
       }
 
@@ -48,6 +63,7 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: FutureBuilder(
           future: fetchData(),
@@ -62,18 +78,21 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    SleepHistoryPage(scores[e.key], e.value),
+                                builder: (context) => SleepHistoryPage(
+                                    scores[e.key], e.value, dairySleep[e.key]),
                               )),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
                                 '${e.key.month}月${e.key.day}日',
                                 style: const TextStyle(fontSize: 25),
                               ),
-                              ...List.generate(48, (index) {
-                                return SleepLevelBarPixel(e.value[index]);
-                              }),
+                              Row(
+                                children: List.generate(48, (index) {
+                                  return SleepLevelBarPixel(e.value[index]);
+                                }),
+                              ),
                             ],
                           ),
                         ))
@@ -131,5 +150,9 @@ class SleepLevelBarPixel extends StatelessWidget {
 extension on DateTime {
   DateTime get yesterday {
     return DateTime(year, month, day).subtract(const Duration(days: 1));
+  }
+
+  DateTime get tomorrow {
+    return DateTime(year, month, day).add(const Duration(days: 1));
   }
 }

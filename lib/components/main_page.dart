@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpg_font/components/set_timer.dart';
-import 'package:rpg_font/components/sleep_history.dart';
+import 'package:rpg_font/components/sleep_history_list.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -59,7 +59,7 @@ class _MainPageState extends State<MainPage> {
           onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: ((context) => const SleepHistoryPage()))),
+                  builder: ((context) => const SleepHistoryListPage()))),
           child: const Text('詳細'),
         ),
       ),

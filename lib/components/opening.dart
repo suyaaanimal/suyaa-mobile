@@ -20,14 +20,15 @@ class _OpeningPageState extends State<OpeningPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BottomFloattingSpeechBubble(
-        texts: texts,
-        onEnd: () => Navigator.push(context,
-            MaterialPageRoute(builder: ((context) => const LoginPage()))),
-        child: const Center(
-          child: Text('映像が流れる...'),
+      body: Stack(children: [
+        Positioned(child: Image.asset('asset/Gametytle.png')),
+        BottomFloattingSpeechBubble(
+          texts: texts,
+          onEnd: () => Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => const LoginPage()))),
+          child: Container(),
         ),
-      ),
+      ]),
     );
   }
 }

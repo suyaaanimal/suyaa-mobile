@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         visible: !loading,
         replacement: const CircularProgressIndicator(),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text('DEMO画面が表示される...'),
+          Image.asset('asset/Gametytle.png'),
           Visibility(visible: failed, child: const Text('失敗しました。')),
           TextField(
             controller: usernameController,

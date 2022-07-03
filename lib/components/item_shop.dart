@@ -19,7 +19,7 @@ class _ItemShopState extends State<ItemShop> {
         visible: maskModel.signined,
         replacement: const Text('Metamaskなどにログインしてください'),
         child: Column(children: [
-          const Text("itemの画像"),
+          Image.asset('asset/introduction/Upper1.png'),
           const Text("\$1"),
           ElevatedButton(
               onPressed: () async {

@@ -22,7 +22,25 @@ class _ItemShopState extends State<ItemShop> {
           const Text("itemの画像"),
           const Text("\$1"),
           ElevatedButton(
-              onPressed: () => maskModel.burn(1), child: const Text("買う")),
+              onPressed: () async {
+                await maskModel.burn(1);
+                showDialog<void>(
+                    context: context,
+                    builder: (_) {
+                      return AlertDialog(
+                        title: const Text('購入ありがとうございます！'),
+                        actions: <Widget>[
+                          GestureDetector(
+                            child: const Text('OK'),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+              child: const Text("買う")),
         ]),
       ),
     );

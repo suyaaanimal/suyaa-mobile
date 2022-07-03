@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:rpg_font/const.dart';
 
 class User extends ChangeNotifier {
   String? name;
@@ -13,7 +14,7 @@ class User extends ChangeNotifier {
   Future<bool> signup(
       String name, String password, String walletAddress) async {
     final response = await http.post(
-        Uri.parse('http://localhost:3000/auth/signup'),
+        Uri.parse('http://$domain:3000/auth/signup'),
         body: json.encode({
           'username': name,
           'password': password,
@@ -35,7 +36,7 @@ class User extends ChangeNotifier {
 
   signin(String name, String password) async {
     final response =
-        await http.post(Uri.parse('http://localhost:3000/auth/signin'),
+        await http.post(Uri.parse('http://$domain:3000/auth/signin'),
             body: json.encode({
               'username': name,
               'password': password,

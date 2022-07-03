@@ -37,6 +37,9 @@ dependencies:
   provider: ^6.0.3
   fl_chart: ^0.55.0
   syncfusion_flutter_charts: ^20.1.61
+  web3dart: ^2.3.5
+  web3_connect: ^0.0.3
+  web_socket_channel: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +51,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.1.10
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

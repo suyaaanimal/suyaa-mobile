@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rpg_font/components/item_shop.dart';
 import 'package:rpg_font/components/set_timer.dart';
 import 'package:rpg_font/components/sleep_history_list.dart';
+
+import '../model/metamask.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -15,6 +19,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final maskModel = context.watch<Metamask>();
     return Scaffold(
       body: Container(
         color: isSleeping ? Colors.black : Colors.white,
@@ -23,6 +28,19 @@ class _MainPageState extends State<MainPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('ホーム画面'),
+            Visibility(
+                visible: maskModel.signined,
+                child: FutureBuilder(
+                    future: maskModel.balance(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('データの取得に失敗しました');
+                      }
+                      if (snapshot.hasData) {
+                        return Text('残高:${snapshot.data}');
+                      }
+                      return const Text('残高の取得中...');
+                    })),
             Visibility(
               visible: !isSleeping,
               child: ElevatedButton(
@@ -50,6 +68,21 @@ class _MainPageState extends State<MainPage> {
                       });
                     },
                     child: const Text('起床'))),
+            Visibility(
+              visible: !maskModel.signined,
+              replacement: ElevatedButton(
+                child: const Text('Item Shop'),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ItemShop(),
+                  ),
+                ),
+              ),
+              child: ElevatedButton(
+                  onPressed: () => maskModel.connect(),
+                  child: const Text('Metamaskに接続')),
+            ),
           ],
         )),
       ),

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' show get;
 import 'package:rpg_font/components/sleep_history.dart';
 
+import '../const.dart';
+
 class SleepHistoryListPage extends StatefulWidget {
   const SleepHistoryListPage({Key? key}) : super(key: key);
 
@@ -16,7 +18,7 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
   final Map<DateTime, List<int>> levels = {};
   final Map<DateTime, List<SerialSleep>> dairySleep = {};
   Future fetchData() async {
-    final response = await get(Uri.parse("http://192.168.2.108:3000/testdata"));
+    final response = await get(Uri.parse("http://$domain:3000/testdata"));
     final jsonData = json.decode(response.body);
     if (jsonData['status']) {
       for (final scoreJson in jsonData['data']['totalScore']) {

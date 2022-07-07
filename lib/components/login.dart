@@ -32,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final userModel = context.watch<User>();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Visibility(
         visible: !loading,
         replacement: const CircularProgressIndicator(),

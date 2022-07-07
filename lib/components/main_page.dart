@@ -3,7 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:rpg_font/components/item_shop.dart';
 import 'package:rpg_font/components/set_timer.dart';
 import 'package:rpg_font/components/sleep_history_list.dart';
+import 'package:rpg_font/const.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../model/metamask.dart';
 
@@ -29,8 +33,10 @@ class _MainPageState extends State<MainPage> {
             Positioned(
                 child: Visibility(
               visible: isSleeping,
-              replacement: Column(
-                children: [Image.asset('asset/seichou/shouni.png')],
+              replacement: Visibility(
+                visible: !maskModel.itemBuyed,
+                replacement: Image.asset('asset/seichou/otona_big.png'),
+                child: Image.asset('asset/seichou/otona.png'),
               ),
               child: Image.asset('asset/zzz.png'),
             )),
@@ -51,15 +57,15 @@ class _MainPageState extends State<MainPage> {
                 //           }
                 //           return const Text('残高の取得中...');
                 //         })),
-                Visibility(
-                  visible: !isSleeping,
-                  child: ElevatedButton(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => const SetTimer()))),
-                      child: const Text('タイマー')),
-                ),
+                // Visibility(
+                //   visible: !isSleeping,
+                //   child: ElevatedButton(
+                //       onPressed: () => Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: ((context) => const SetTimer()))),
+                //       child: const Text('タイマー')),
+                // ),
                 Visibility(
                   visible: !isSleeping,
                   child: ElevatedButton(
@@ -93,6 +99,10 @@ class _MainPageState extends State<MainPage> {
                       onPressed: () => maskModel.connect(),
                       child: const Text('Metamaskに接続')),
                 ),
+                ElevatedButton(
+                    onPressed: () => launchUrlString(
+                        'https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=238H4M&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Ffitbit_auth_callback&scope=sleep&expires_in=604800'),
+                    child: const Text('fitbitに連携')),
               ],
             )),
           ],

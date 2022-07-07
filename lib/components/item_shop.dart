@@ -15,34 +15,50 @@ class _ItemShopState extends State<ItemShop> {
   Widget build(BuildContext context) {
     final maskModel = context.watch<Metamask>();
     return Scaffold(
-      body: Visibility(
-        visible: maskModel.signined,
-        replacement: const Text('Metamaskなどにログインしてください'),
-        child: Column(children: [
-          Image.asset('asset/introduction/Upper1.png'),
-          const Text("\$1"),
-          ElevatedButton(
-              onPressed: () async {
-                await maskModel.burn(1);
-                showDialog<void>(
-                    context: context,
-                    builder: (_) {
-                      return AlertDialog(
-                        title: const Text('購入ありがとうございます！'),
-                        actions: <Widget>[
-                          GestureDetector(
-                            child: const Text('OK'),
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    });
-              },
-              child: const Text("買う")),
-        ]),
-      ),
+      body: Stack(children: [
+        SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.asset('asset/shop.png'),
+              Image.asset('asset/introduction/Bottom1-2.png'),
+            ],
+          ),
+        ),
+        Center(
+          child: Visibility(
+            visible: maskModel.signined,
+            replacement: const Text('Metamaskなどにログインしてください'),
+            child: Column(children: [
+              const SizedBox(height: 380),
+              const Text(
+                "\$1",
+                style: TextStyle(fontSize: 35),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    await maskModel.burn(1);
+                    await showDialog<void>(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: const Text('購入ありがとうございます！'),
+                            actions: <Widget>[
+                              GestureDetector(
+                                child: const Text('OK'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                    maskModel.buyItem();
+                  },
+                  child: const Text("買う")),
+            ]),
+          ),
+        ),
+      ]),
     );
   }
 }

@@ -17,6 +17,7 @@ class Metamask extends ChangeNotifier {
   late final contract =
       Suyaa(address: EthereumAddress.fromHex(contractAddress), client: client);
   bool signined = false;
+  bool itemBuyed = false;
 
   connect() async {
     connection.enterChainId(80001);
@@ -54,5 +55,10 @@ class Metamask extends ChangeNotifier {
     BigInt balance =
         await contract.balanceOf(EthereumAddress.fromHex(connection.account));
     return balance.toInt();
+  }
+
+  buyItem() {
+    itemBuyed = true;
+    notifyListeners();
   }
 }

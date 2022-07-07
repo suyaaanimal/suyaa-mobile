@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rpg_font/const.dart';
 
 class User extends ChangeNotifier {
@@ -10,11 +11,20 @@ class User extends ChangeNotifier {
   String? walletAddress;
   bool _logined = false;
   bool get logined => _logined;
+  String domain;
+  String port;
+
+  User(this.domain, this.port);
+
+  updateDomain(domain, port) {
+    this.domain = domain;
+    this.port = port;
+  }
 
   Future<bool> signup(
       String name, String password, String walletAddress) async {
     final response = await http.post(
-        Uri.parse('http://$domain:3000/auth/signup'),
+        Uri.parse('http://$domain:$port/auth/signup'),
         body: json.encode({
           'username': name,
           'password': password,
@@ -36,7 +46,7 @@ class User extends ChangeNotifier {
 
   signin(String name, String password) async {
     final response =
-        await http.post(Uri.parse('http://$domain:3000/auth/signin'),
+        await http.post(Uri.parse('http://$domain:$port/auth/signin'),
             body: json.encode({
               'username': name,
               'password': password,

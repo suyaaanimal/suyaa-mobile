@@ -3,9 +3,7 @@ import 'package:rpg_font/components/login.dart';
 import 'package:rpg_font/components/speech_buddle.dart';
 
 class OpeningPage extends StatefulWidget {
-  const OpeningPage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const OpeningPage({Key? key}) : super(key: key);
 
   @override
   State<OpeningPage> createState() => _OpeningPageState();

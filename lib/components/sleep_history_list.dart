@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' show get;
+import 'package:provider/provider.dart';
 import 'package:rpg_font/components/sleep_history.dart';
+import 'package:rpg_font/model/domain.dart';
 
 import '../const.dart';
 
@@ -17,8 +19,12 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
   final Map<DateTime, int> scores = {};
   final Map<DateTime, List<int>> levels = {};
   final Map<DateTime, List<SerialSleep>> dairySleep = {};
+
+  late String domain;
+  late String port;
+
   Future fetchData() async {
-    final response = await get(Uri.parse("http://$domain:3000/testdata"));
+    final response = await get(Uri.parse("http://$domain:$port/testdata"));
     final jsonData = json.decode(response.body);
     if (jsonData['status']) {
       for (final scoreJson in jsonData['data']['totalScore']) {
@@ -64,6 +70,10 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final domainModel = context.watch<Domain>();
+    domain = domainModel.domain;
+    port = domainModel.port;
+
     return Scaffold(
       appBar: AppBar(),
       body: Center(

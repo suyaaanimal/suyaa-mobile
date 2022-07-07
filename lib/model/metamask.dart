@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:rpg_font/suyaa.g.dart';
 import 'package:web3_connect/web3_connect.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class Metamask extends ChangeNotifier {

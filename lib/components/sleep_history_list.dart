@@ -6,8 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:rpg_font/components/sleep_history.dart';
 import 'package:rpg_font/model/domain.dart';
 
-import '../const.dart';
-
 class SleepHistoryListPage extends StatefulWidget {
   const SleepHistoryListPage({Key? key}) : super(key: key);
 
@@ -129,6 +127,7 @@ class SleepLevelBarPixel extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (level) {
       case 0:
+        // ignore: sized_box_for_whitespace
         return Container(
           width: width,
           height: height,
@@ -152,6 +151,7 @@ class SleepLevelBarPixel extends StatelessWidget {
           color: Colors.blue,
         );
     }
+    // ignore: sized_box_for_whitespace
     return Container(
       width: width,
       height: height,
@@ -162,9 +162,5 @@ class SleepLevelBarPixel extends StatelessWidget {
 extension on DateTime {
   DateTime get yesterday {
     return DateTime(year, month, day).subtract(const Duration(days: 1));
-  }
-
-  DateTime get tomorrow {
-    return DateTime(year, month, day).add(const Duration(days: 1));
   }
 }

@@ -3,10 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:rpg_font/components/item_shop.dart';
 import 'package:rpg_font/components/set_timer.dart';
 import 'package:rpg_font/components/sleep_history_list.dart';
-import 'package:rpg_font/const.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../model/metamask.dart';
@@ -44,28 +40,28 @@ class _MainPageState extends State<MainPage> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Visibility(
-                //     visible: maskModel.signined,
-                //     child: FutureBuilder(
-                //         future: maskModel.balance(),
-                //         builder: (context, snapshot) {
-                //           if (snapshot.hasError) {
-                //             return const Text('データの取得に失敗しました');
-                //           }
-                //           if (snapshot.hasData) {
-                //             return Text('残高:${snapshot.data}');
-                //           }
-                //           return const Text('残高の取得中...');
-                //         })),
-                // Visibility(
-                //   visible: !isSleeping,
-                //   child: ElevatedButton(
-                //       onPressed: () => Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: ((context) => const SetTimer()))),
-                //       child: const Text('タイマー')),
-                // ),
+                Visibility(
+                    visible: maskModel.signined,
+                    child: FutureBuilder(
+                        future: maskModel.balance(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('データの取得に失敗しました');
+                          }
+                          if (snapshot.hasData) {
+                            return Text('残高:${snapshot.data}');
+                          }
+                          return const Text('残高の取得中...');
+                        })),
+                Visibility(
+                  visible: !isSleeping,
+                  child: ElevatedButton(
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => const SetTimer()))),
+                      child: const Text('タイマー')),
+                ),
                 Visibility(
                   visible: !isSleeping,
                   child: ElevatedButton(

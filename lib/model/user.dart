@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class User extends ChangeNotifier {
   String? name;
+  String? password;
   String? sessionToken;
   String? walletAddress;
   bool _logined = false;
@@ -31,6 +32,7 @@ class User extends ChangeNotifier {
         headers: {"Content-Type": "application/json"});
     if (response.statusCode == 200) {
       this.name = name;
+      this.password = password;
       sessionToken = json.decode(response.body)['token'];
       this.walletAddress = walletAddress;
       _logined = true;
@@ -52,6 +54,7 @@ class User extends ChangeNotifier {
             headers: {"Content-Type": "application/json"});
     if (response.statusCode == 200) {
       this.name = name;
+      this.password = password;
       sessionToken = json.decode(response.body)['token'];
       _logined = true;
       notifyListeners();

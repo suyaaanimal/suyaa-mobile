@@ -40,19 +40,18 @@ class _MainPageState extends State<MainPage> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Visibility(
-                    visible: maskModel.signined,
-                    child: FutureBuilder(
-                        future: maskModel.balance(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return const Text('データの取得に失敗しました');
-                          }
-                          if (snapshot.hasData) {
-                            return Text('残高:${snapshot.data}');
-                          }
-                          return const Text('残高の取得中...');
-                        })),
+                if (maskModel.signined)
+                  FutureBuilder(
+                      future: maskModel.balance(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('データの取得に失敗しました');
+                        }
+                        if (snapshot.hasData) {
+                          return Text('残高:${snapshot.data}');
+                        }
+                        return const Text('残高の取得中...');
+                      }),
                 Visibility(
                   visible: !isSleeping,
                   child: ElevatedButton(

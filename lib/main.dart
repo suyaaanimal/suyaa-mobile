@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rpg_font/model/domain.dart';
 import 'package:rpg_font/model/metamask.dart';
+import 'package:rpg_font/service/server.dart';
 import 'components/opening.dart';
-import 'model/user.dart';
 
 void main() {
-  runApp(MultiProvider(providers: [
-    Provider<Domain>(create: (_) => Domain()),
-    ChangeNotifierProxyProvider<Domain, User>(
-      create: (context) => User(
-        context.read<Domain>().domain,
-        context.read<Domain>().port,
-      ),
-      update: (context, domain, user) =>
-          (user?..updateDomain(domain.domain, domain.port)) ??
-          User(domain.domain, domain.port),
-    ),
-    ChangeNotifierProvider<Metamask>(create: (_) => Metamask()),
-  ], child: const MyApp()));
+  Provider.debugCheckInvalidValueType = null;
+
+  runApp(MultiProvider(
+    providers: [
+      Provider<Domain>(create: (_) => Domain()),
+      ProxyProvider<Domain, Server>(
+          create: (context) => Server(context.read<Domain>()),
+          update: (context, domain, server) =>
+              (server?..user.updateDomain(domain.domain, domain.port)) ??
+              Server(domain)),
+      ChangeNotifierProvider<Metamask>(create: (_) => Metamask()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -63,6 +64,7 @@ class _InputDomainPageState extends State<InputDomainPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('サーバのIPアドレスかドメインとポート番号を入力してください。'),
+            const Text('If you are a test user, you can skip here.'),
             TextField(
               controller: domainTc,
               decoration: const InputDecoration(

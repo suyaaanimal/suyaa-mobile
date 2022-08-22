@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rpg_font/components/main_page.dart';
 
-import '../model/user.dart';
+import '../service/server.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool signuped = false;
+  bool signuped = true;
   bool loading = false;
   bool failed = false;
   bool success = false;
@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userModel = context.watch<User>();
+    final serverModel = context.read<Server>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Visibility(
@@ -60,10 +60,10 @@ class _LoginPageState extends State<LoginPage> {
                   loading = true;
                 });
                 if (signuped) {
-                  success = await userModel.signin(
+                  success = await serverModel.signin(
                       usernameController.text, passwordController.text);
                 } else {
-                  success = await userModel.signup(usernameController.text,
+                  success = await serverModel.signup(usernameController.text,
                       passwordController.text, walletAddressController.text);
                 }
                 setState(() {

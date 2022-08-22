@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' show get;
 import 'package:provider/provider.dart';
 import 'package:rpg_font/components/sleep_history.dart';
-import 'package:rpg_font/model/domain.dart';
+
+import '../service/server.dart';
 
 class SleepHistoryListPage extends StatefulWidget {
   const SleepHistoryListPage({Key? key}) : super(key: key);
@@ -18,12 +17,8 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
   final Map<DateTime, List<int>> levels = {};
   final Map<DateTime, List<SerialSleep>> dairySleep = {};
 
-  late String domain;
-  late String port;
-
-  Future fetchData() async {
-    final response = await get(Uri.parse("http://$domain:$port/testdata"));
-    final jsonData = json.decode(response.body);
+  Future fetchData(Server server) async {
+    final jsonData = await server.fetchTestData();
     if (jsonData['status']) {
       for (final scoreJson in jsonData['data']['totalScore']) {
         if (scoreJson.containsKey('dateTime') &&
@@ -68,15 +63,11 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final domainModel = context.watch<Domain>();
-    domain = domainModel.domain;
-    port = domainModel.port;
-
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: FutureBuilder(
-          future: fetchData(),
+          future: fetchData(context.read<Server>()),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasError) {
               return Text('Something went wrong:${snapshot.error}');

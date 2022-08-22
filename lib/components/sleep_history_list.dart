@@ -54,7 +54,6 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
           }
         }
       }
-
       return true;
     } else {
       return false;
@@ -87,7 +86,7 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
                             children: [
                               Text(
                                 '${e.key.month}月${e.key.day}日',
-                                style: const TextStyle(fontSize: 25),
+                                style: const TextStyle(fontSize: 19),
                               ),
                               Row(
                                 children: List.generate(48, (index) {
@@ -110,9 +109,11 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
 
 class SleepLevelBarPixel extends StatelessWidget {
   final int level;
-  final width = 5.0;
-  final height = 5.0;
-  const SleepLevelBarPixel(this.level, {Key? key}) : super(key: key);
+  final double width;
+  final double height;
+  const SleepLevelBarPixel(this.level,
+      {this.width = 5.0, this.height = 8.0, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

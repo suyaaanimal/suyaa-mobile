@@ -28,16 +28,59 @@ class _SleepHistoryPageState extends State<SleepHistoryPage> {
             if (widget.dairySleeps != null)
               for (final sleep in widget.dairySleeps!)
                 if (sleep.levels.isNotEmpty)
-                  SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    primaryYAxis: NumericAxis(),
-                    series: <ChartSeries>[
-                      StepLineSeries<ChartData, String>(
-                          dataSource: sleep.dataSource,
-                          xValueMapper: (ChartData data, _) => data.x,
-                          yValueMapper: (ChartData data, _) => data.y)
-                    ],
-                  ),
+                  LayoutBuilder(builder: (context, constarints) {
+                    return SizedBox(
+                      width: constarints.maxWidth * 0.9,
+                      child: Card(
+                        color: Colors.black,
+                        margin: const EdgeInsets.all(10),
+                        elevation: 8,
+                        shadowColor: Colors.purpleAccent.shade100,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 30, horizontal: 20),
+                          child: Column(
+                            children: [
+                              LayoutBuilder(
+                                builder: ((context, constraints) {
+                                  double graphWidth =
+                                      constraints.maxWidth * 0.8;
+                                  double maxGraphWidth =
+                                      sleep.levels.length * 20.0;
+                                  if (maxGraphWidth < graphWidth) {
+                                    graphWidth = maxGraphWidth;
+                                  }
+                                  double blockWidth =
+                                      graphWidth / sleep.dataSource.length;
+                                  double blockHeight = blockWidth * 0.6;
+                                  double graphHeight = blockHeight * 4;
+                                  return CustomPaint(
+                                    size: Size(graphWidth, graphHeight),
+                                    painter: MyPainter(
+                                      sleep.dataSource
+                                          .map((e) => e.level)
+                                          .toList(),
+                                      [
+                                        Colors.red,
+                                        Colors.blue,
+                                        Colors.blueGrey,
+                                        Colors.purple,
+                                      ],
+                                      0.6,
+                                      sleep.dataSource.first.time,
+                                      sleep.dataSource.last.time,
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  })
           ]),
         ),
       ),
@@ -61,4 +104,61 @@ class SerialSleep {
       levels.length,
       (index) =>
           ChartData(start.add(Duration(minutes: index * 30)), levels[index]));
+}
+
+class MyPainter extends CustomPainter {
+  MyPainter(this.data, this.colors, this.blockRatio, this.start, this.end);
+  final List<int> data;
+  List<Color> colors;
+  final double blockRatio;
+  final DateTime start;
+  final DateTime end;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double blockWidth = size.width / data.length;
+    double blockHeight = blockWidth * blockRatio;
+    final paint = List.generate(4, (index) => Paint()..color = colors[index]);
+    for (var i = 0; i < data.length; i++) {
+      final rect = Rect.fromLTWH(
+          blockWidth * i, data[i] * blockHeight, blockWidth, blockHeight);
+      canvas.drawRect(rect, paint[data[i]]);
+    }
+
+    // 時刻
+    const textStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 10,
+    );
+
+    final startText =
+        '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}';
+    final endText =
+        '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}';
+    final startTextSpan = TextSpan(
+      style: textStyle,
+      text: startText,
+    );
+    final endTextSpan = TextSpan(
+      style: textStyle,
+      text: endText,
+    );
+
+    final startTextPainter = TextPainter(
+      text: startTextSpan,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: size.width / 2);
+    final endTextPainter = TextPainter(
+      text: endTextSpan,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: blockWidth, maxWidth: size.width / 2);
+
+    var startTextOffset = Offset(0, blockHeight * 4 + 5.0);
+    var endTextOffset = Offset(size.width - blockWidth, blockHeight * 4 + 5.0);
+    startTextPainter.paint(canvas, startTextOffset);
+    endTextPainter.paint(canvas, endTextOffset);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

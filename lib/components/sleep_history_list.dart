@@ -31,16 +31,16 @@ class _SleepHistoryListPageState extends State<SleepHistoryListPage> {
             levelJson.containsKey('level')) {
           final time = DateTime.parse(levelJson['dateTime']);
           final day = DateTime(time.year, time.month, time.day);
-          levels[day] ??= List.filled(48, 0);
+          levels[day] ??= List.filled(48, -1);
           final index = time.hour * 2 + time.minute ~/ 30;
           final level = levels[day]![index] = levelJson['level'];
 
           dairySleep[day] ??= [];
           final hasSleeped = ((index == 0)
-              ? ((levels[day.yesterday]?[47] ?? 0) > 0)
-              : ((levels[day]![index - 1]) > 0));
+              ? ((levels[day.yesterday]?[47] ?? -1) >= 0)
+              : ((levels[day]![index - 1]) >= 0));
           if (!hasSleeped) {
-            if (level > 0) {
+            if (level >= 0) {
               dairySleep[day]!.add(SerialSleep(time, [level]));
             } else {
               dairySleep[day]!.add(SerialSleep(time, []));
@@ -122,24 +122,25 @@ class SleepLevelBarPixel extends StatelessWidget {
         return Container(
           width: width,
           height: height,
+          color: Colors.red,
         );
       case 1:
         return Container(
           width: width,
           height: height,
-          color: Colors.red,
+          color: Colors.blue,
         );
       case 2:
         return Container(
           width: width,
           height: height,
-          color: Colors.green,
+          color: Colors.blueGrey,
         );
       case 3:
         return Container(
           width: width,
           height: height,
-          color: Colors.blue,
+          color: Colors.purple,
         );
     }
     // ignore: sized_box_for_whitespace

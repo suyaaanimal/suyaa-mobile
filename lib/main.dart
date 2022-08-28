@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rpg_font/components/main_page.dart';
+import 'package:rpg_font/const.dart';
 import 'package:rpg_font/model/domain.dart';
 import 'package:rpg_font/model/metamask.dart';
 import 'package:rpg_font/service/server.dart';
@@ -58,6 +60,14 @@ class _InputDomainPageState extends State<InputDomainPage> {
 
   @override
   Widget build(BuildContext context) {
+    // テストようにテストユーザとして強制的にサインイン
+    // 最初のロードやサインインがしたい場合はこのコードを削除する
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<Server>().signin(testUserName, testUserPassword);
+      if (!mounted) return;
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => const MainPage()));
+    });
     return Scaffold(
       body: Center(
         child: Column(

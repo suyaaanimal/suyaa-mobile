@@ -1,14 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rpg_font/firebase_options.dart';
+import 'package:rpg_font/components/deep_link.dart';
 import 'package:rpg_font/components/main_page.dart';
 import 'package:rpg_font/const.dart';
 import 'package:rpg_font/model/domain.dart';
 import 'package:rpg_font/model/metamask.dart';
 import 'package:rpg_font/service/server.dart';
+import 'package:uni_links/uni_links.dart';
 import 'components/opening.dart';
 
-void main() {
+void main() async {
   Provider.debugCheckInvalidValueType = null;
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.ios);
 
   runApp(MultiProvider(
     providers: [
@@ -36,6 +42,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const InputDomainPage(),
+      routes: {'/fitbit_auth_callback': (_) => const FitbitAuthCallback()},
     );
   }
 }
@@ -60,7 +67,6 @@ class _InputDomainPageState extends State<InputDomainPage> {
 
   @override
   Widget build(BuildContext context) {
-    // テストようにテストユーザとして強制的にサインイン
     // 最初のロードやサインインがしたい場合はこのコードを削除する
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await context.read<Server>().signin(testUserName, testUserPassword);

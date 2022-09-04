@@ -6,6 +6,7 @@ import 'package:rpg_font/components/sleep_history_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../model/metamask.dart';
+import '../service/server.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final maskModel = context.watch<Metamask>();
+    final serverController = context.read<Server>();
     return Scaffold(
       body: Container(
         color: isSleeping ? Colors.black : Colors.white,
@@ -95,8 +97,7 @@ class _MainPageState extends State<MainPage> {
                       child: const Text('Metamaskに接続')),
                 ),
                 ElevatedButton(
-                    onPressed: () => launchUrlString(
-                        'https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=238H4M&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Ffitbit_auth_callback&scope=sleep&expires_in=604800'),
+                    onPressed: () => serverController.connectFitbit(),
                     child: const Text('fitbitに連携')),
               ],
             )),

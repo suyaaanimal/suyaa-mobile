@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:rpg_font/const.dart';
+import 'package:rpg_font/service/oauth2.dart';
 
 import '../model/domain.dart';
 import '../model/user.dart';
 import 'package:http/http.dart';
 
 class Server {
+  final _oauth2 = Oauth2();
   Server(Domain domain) : user = User(domain.domain, domain.port);
 
   User user;
@@ -41,6 +43,16 @@ class Server {
     final response =
         await get(Uri.parse("http://${user.domain}:${user.port}/testdata"));
     return json.decode(response.body);
+  }
+
+  Future<void> connectFitbit() async {
+    final token = await _oauth2.getToken();
+    if (test) {
+      debugPrint(token);
+      return;
+    } else {
+      // TODO::サーバにトークンを送信
+    }
   }
 }
 

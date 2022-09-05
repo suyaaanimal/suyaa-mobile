@@ -1,12 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SleepHistoryPage extends StatefulWidget {
-  final int? score;
-  final List<int> levels;
-  final List<SerialSleep>? dairySleeps;
-  const SleepHistoryPage(this.score, this.levels, this.dairySleeps, {Key? key})
-      : super(key: key);
+  final List<DairySleepModel> dairySleeps;
+  const SleepHistoryPage(this.dairySleeps, {Key? key}) : super(key: key);
 
   @override
   State<SleepHistoryPage> createState() => _SleepHistoryPageState();
@@ -23,14 +21,13 @@ class _SleepHistoryPageState extends State<SleepHistoryPage> {
         child: SingleChildScrollView(
           child: Column(children: [
             const Text('睡眠履歴'),
-            Text(
-                '睡眠点数:${widget.score != null ? '${widget.score}点' : '取得に失敗しました'}'),
-            if (widget.dairySleeps != null)
-              for (final sleep in widget.dairySleeps!)
-                if (sleep.levels.isNotEmpty)
-                  LayoutBuilder(builder: (context, constarints) {
+            for (final sleep in widget.dairySleeps)
+              Column(
+                children: [
+                  Text('睡眠点数: ${sleep.score}点'),
+                  LayoutBuilder(builder: (context, constrants) {
                     return SizedBox(
-                      width: constarints.maxWidth * 0.9,
+                      width: constrants.maxWidth * 0.9,
                       child: Card(
                         color: Colors.black,
                         margin: const EdgeInsets.all(10),
@@ -43,44 +40,21 @@ class _SleepHistoryPageState extends State<SleepHistoryPage> {
                               vertical: 30, horizontal: 20),
                           child: Column(
                             children: [
-                              LayoutBuilder(
-                                builder: ((context, constraints) {
-                                  double graphWidth =
-                                      constraints.maxWidth * 0.8;
-                                  double maxGraphWidth =
-                                      sleep.levels.length * 20.0;
-                                  if (maxGraphWidth < graphWidth) {
-                                    graphWidth = maxGraphWidth;
-                                  }
-                                  double blockWidth =
-                                      graphWidth / sleep.dataSource.length;
-                                  double blockHeight = blockWidth * 0.6;
-                                  double graphHeight = blockHeight * 4;
-                                  return CustomPaint(
+                              LayoutBuilder(builder: ((context, constraints) {
+                                double graphWidth = constraints.maxWidth * 0.8;
+                                double graphHeight = graphWidth * 0.6;
+                                return CustomPaint(
                                     size: Size(graphWidth, graphHeight),
-                                    painter: MyPainter(
-                                      sleep.dataSource
-                                          .map((e) => e.level)
-                                          .toList(),
-                                      [
-                                        Colors.red,
-                                        Colors.blue,
-                                        Colors.blueGrey,
-                                        Colors.purple,
-                                      ],
-                                      0.6,
-                                      sleep.dataSource.first.time,
-                                      sleep.dataSource.last.time,
-                                    ),
-                                  );
-                                }),
-                              ),
+                                    painter: MyPainter(sleep));
+                              }))
                             ],
                           ),
                         ),
                       ),
                     );
                   })
+                ],
+              )
           ]),
         ),
       ),
@@ -88,41 +62,95 @@ class _SleepHistoryPageState extends State<SleepHistoryPage> {
   }
 }
 
-class ChartData {
-  ChartData(this.time, this.level);
-  final DateTime time;
-  String get x => '${time.hour}:${time.minute}';
-  final int level;
-  double get y => level.toDouble();
+enum SleepLevel {
+  wake,
+  light,
+  deep,
+  rem,
 }
 
-class SerialSleep {
-  SerialSleep(this.start, this.levels);
-  final DateTime start;
-  final List<int> levels;
-  List<ChartData> get dataSource => List.generate(
-      levels.length,
-      (index) =>
-          ChartData(start.add(Duration(minutes: index * 30)), levels[index]));
+extension SleepColor on SleepLevel {
+  Color get color {
+    switch (this) {
+      case SleepLevel.wake:
+        return Colors.red;
+      case SleepLevel.light:
+        return Colors.blue;
+      case SleepLevel.deep:
+        return Colors.blueGrey;
+      case SleepLevel.rem:
+        return Colors.purple;
+    }
+  }
+}
+
+enum SleepType {
+  normal,
+  short,
+}
+
+class SleepModel {
+  SleepModel(
+      {required this.time,
+      required levelString,
+      required this.seconds,
+      required this.type})
+      : level = SleepLevel.values
+            .firstWhere((element) => element.name == levelString);
+  final DateTime time;
+  final SleepLevel level;
+  final int seconds;
+  final SleepType type;
+}
+
+class DairySleepModel {
+  DairySleepModel(
+      {required this.score, required String start, required this.duration})
+      : get2sleep = DateTime.parse(start);
+
+  final int score;
+  final int duration;
+  final DateTime get2sleep;
+
+  final data = <DateTime, SleepModel>{};
+  final shortData = <DateTime, SleepModel>{};
+
+  DateTime get awake => get2sleep.add(Duration(milliseconds: duration));
+  Map<DateTime, SleepModel> get allData => {...data, ...shortData};
+
+  void addData(SleepModel s) => data.addAll({s.time: s});
+  void addShortData(SleepModel s) => shortData.addAll({s.time: s});
 }
 
 class MyPainter extends CustomPainter {
-  MyPainter(this.data, this.colors, this.blockRatio, this.start, this.end);
-  final List<int> data;
-  List<Color> colors;
-  final double blockRatio;
-  final DateTime start;
-  final DateTime end;
+  MyPainter(this.dairySleep);
+  final DairySleepModel dairySleep;
+  late final maxSleepSeconds =
+      max(const Duration(hours: 10).inSeconds, dairySleep.duration / 1000);
 
   @override
   void paint(Canvas canvas, Size size) {
-    double blockWidth = size.width / data.length;
-    double blockHeight = blockWidth * blockRatio;
-    final paint = List.generate(4, (index) => Paint()..color = colors[index]);
-    for (var i = 0; i < data.length; i++) {
-      final rect = Rect.fromLTWH(
-          blockWidth * i, data[i] * blockHeight, blockWidth, blockHeight);
-      canvas.drawRect(rect, paint[data[i]]);
+    /// 中央揃えのための横幅
+    double offsetWidth = (size.width -
+            dairySleep.duration.toDouble() /
+                1000.0 /
+                maxSleepSeconds.toDouble() *
+                size.width) /
+        2;
+
+    double blockHeight = size.height / 4;
+    final paint = Paint();
+    for (final sleepKey in dairySleep.allData.keys) {
+      final sleep = dairySleep.allData[sleepKey] as SleepModel;
+      double blockWidth =
+          size.width * sleep.seconds.toDouble() / maxSleepSeconds;
+      double start =
+          sleep.time.difference(dairySleep.get2sleep).inSeconds.toDouble() /
+              maxSleepSeconds *
+              size.width;
+      final rect = Rect.fromLTWH(offsetWidth + start,
+          sleep.level.index * blockHeight, blockWidth, blockHeight);
+      canvas.drawRect(rect, paint..color = sleep.level.color);
     }
 
     // 時刻
@@ -132,9 +160,9 @@ class MyPainter extends CustomPainter {
     );
 
     final startText =
-        '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}';
+        '${dairySleep.get2sleep.hour.toString().padLeft(2, '0')}:${dairySleep.get2sleep.minute.toString().padLeft(2, '0')}';
     final endText =
-        '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}';
+        '${dairySleep.awake.hour.toString().padLeft(2, '0')}:${dairySleep.awake.minute.toString().padLeft(2, '0')}';
     final startTextSpan = TextSpan(
       style: textStyle,
       text: startText,
@@ -151,10 +179,12 @@ class MyPainter extends CustomPainter {
     final endTextPainter = TextPainter(
       text: endTextSpan,
       textDirection: TextDirection.ltr,
-    )..layout(minWidth: blockWidth, maxWidth: size.width / 2);
+    )..layout(minWidth: 0, maxWidth: size.width / 2);
 
-    var startTextOffset = Offset(0, blockHeight * 4 + 5.0);
-    var endTextOffset = Offset(size.width - blockWidth, blockHeight * 4 + 5.0);
+    var startTextOffset = Offset(offsetWidth, blockHeight * 4 + 5.0);
+    var endTextOffset = Offset(
+        size.width * dairySleep.duration / 1000 / maxSleepSeconds + offsetWidth,
+        blockHeight * 4 + 5.0);
     startTextPainter.paint(canvas, startTextOffset);
     endTextPainter.paint(canvas, endTextOffset);
   }

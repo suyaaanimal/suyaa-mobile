@@ -1,14 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rpg_font/components/login.dart';
 import 'package:rpg_font/firebase_options.dart';
 import 'package:rpg_font/components/deep_link.dart';
-import 'package:rpg_font/components/main_page.dart';
-import 'package:rpg_font/const.dart';
 import 'package:rpg_font/model/domain.dart';
 import 'package:rpg_font/model/metamask.dart';
 import 'package:rpg_font/service/server.dart';
-import 'package:uni_links/uni_links.dart';
 import 'components/opening.dart';
 
 void main() async {
@@ -55,7 +53,7 @@ class InputDomainPage extends StatefulWidget {
 }
 
 class _InputDomainPageState extends State<InputDomainPage> {
-  final domainTc = TextEditingController();
+  final domainTc = TextEditingController()..text = "localhost";
   final portTc = TextEditingController()..text = "3000";
 
   @override
@@ -68,12 +66,12 @@ class _InputDomainPageState extends State<InputDomainPage> {
   @override
   Widget build(BuildContext context) {
     // 最初のロードやサインインがしたい場合はこのコードを削除する
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<Server>().signin(testUserName, testUserPassword);
-      if (!mounted) return;
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const MainPage()));
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   await context.read<Server>().signin(testUserName, testUserPassword);
+    //   if (!mounted) return;
+    //   Navigator.pushReplacement(
+    //       context, MaterialPageRoute(builder: (_) => const MainPage()));
+    // });
     return Scaffold(
       body: Center(
         child: Column(
@@ -84,7 +82,7 @@ class _InputDomainPageState extends State<InputDomainPage> {
             TextField(
               controller: domainTc,
               decoration: const InputDecoration(
-                hintText: '192.168.10.2',
+                hintText: 'localhost',
               ),
             ),
             TextField(
@@ -103,6 +101,16 @@ class _InputDomainPageState extends State<InputDomainPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => const OpeningPage()));
+              },
+            ),
+            ElevatedButton(
+              child: const Text('skip the opening'),
+              onPressed: () {
+                context.read<Domain>()
+                  ..domain = domainTc.text
+                  ..port = portTc.text;
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               },
             ),
           ],

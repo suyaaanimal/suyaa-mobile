@@ -18,7 +18,7 @@ class _OpeningPageState extends State<OpeningPage> {
       body: BottomFloattingSpeechBubble(
         texts: texts,
         onEnd: () => Navigator.push(
-            context, MaterialPageRoute(builder: ((context) => const Oa()))),
+            context, MaterialPageRoute(builder: ((context) => const O2()))),
         child: SingleChildScrollView(
           child: Column(children: [
             Image.asset('asset/introduction/Upper3.png'),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:state_notifier/state_notifier.dart';
 import 'package:suyaa_mobile/application/state/auth.dart';
 import 'package:suyaa_mobile/infrastructure/constant/debug.dart';
@@ -18,6 +19,7 @@ class Auth extends StateNotifier<AuthState> {
 
   bool get loading => state.loading;
   bool get signedIn => _userInfo.signedIn;
+  String get _accessToken => _userInfo.accessToken;
 
   AuthFailedReasons get failedReasonStatus => state.failedReason;
   bool get failed => failedReasonStatus != AuthFailedReasons.success;
@@ -89,7 +91,11 @@ class Auth extends StateNotifier<AuthState> {
   }
 
   Future<void> connectFitbit() async {
-    throw UnimplementedError();
+    try {
+      await _authRepository.connectFitbit(_accessToken);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future<void> deleteCashedAccessToken() =>

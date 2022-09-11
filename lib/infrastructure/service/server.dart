@@ -79,6 +79,14 @@ class Server {
     }
   }
 
+  Future<void> sendFitbitToken(String token, String accessToken) async {
+    _post(
+      path: '/auth/fitbit/token',
+      params: {'token': token},
+      accessToken: accessToken,
+    );
+  }
+
   Future<Map<String, dynamic>> fetchProfile(String accessToken) async {
     final response = await _get('/auth/profile', accessToken);
     if (!_success(response.statusCode)) {

@@ -84,4 +84,13 @@ class AuthRepository {
   }
 
   Future<void> deleteCashedAccessToken() => _sp.removeAccessToken();
+
+  Future<void> connectFitbit(String accessToken) async {
+    final token = await _oauth2.getToken();
+    if (fitbitTest) {
+      debugPrint(token);
+      return;
+    }
+    await _server.sendFitbitToken(token, accessToken);
+  }
 }

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>169178701488-reauposcjfmh2kqldks3ps9ct74djr6e.apps.googleusercontent.com</string>
+	<string>169178701488-kver538fgo1guqklt1u8tun1uv9v7g2e.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.169178701488-reauposcjfmh2kqldks3ps9ct74djr6e</string>
+	<string>com.googleusercontent.apps.169178701488-kver538fgo1guqklt1u8tun1uv9v7g2e</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBwsIm_tpnYNZaX4TEeMHUfg3aGhtex0uc</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>app.suyaa.ios</string>
+	<string>app.suyaa.suyaaMobile</string>
 	<key>PROJECT_ID</key>
 	<string>suyaa-34ce3</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:169178701488:ios:e78bff74741700dafd6575</string>
+	<string>1:169178701488:ios:72d44f768f4e92e0fd6575</string>
 </dict>
 </plist>

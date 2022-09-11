@@ -24,10 +24,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -52,13 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBwsIm_tpnYNZaX4TEeMHUfg3aGhtex0uc',
-    appId: '1:169178701488:ios:e78bff74741700dafd6575',
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCNEEjqoqt1W6o3niX0RAybT5PxGp0WwPk',
+    appId: '1:169178701488:android:4dca680b32f7dfbcfd6575',
     messagingSenderId: '169178701488',
     projectId: 'suyaa-34ce3',
     storageBucket: 'suyaa-34ce3.appspot.com',
-    iosClientId: '169178701488-reauposcjfmh2kqldks3ps9ct74djr6e.apps.googleusercontent.com',
-    iosBundleId: 'app.suyaa.ios',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBwsIm_tpnYNZaX4TEeMHUfg3aGhtex0uc',
+    appId: '1:169178701488:ios:72d44f768f4e92e0fd6575',
+    messagingSenderId: '169178701488',
+    projectId: 'suyaa-34ce3',
+    storageBucket: 'suyaa-34ce3.appspot.com',
+    iosClientId: '169178701488-kver538fgo1guqklt1u8tun1uv9v7g2e.apps.googleusercontent.com',
+    iosBundleId: 'app.suyaa.suyaaMobile',
   );
 }

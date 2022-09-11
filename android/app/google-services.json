@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "169178701488",
+    "project_id": "suyaa-34ce3",
+    "storage_bucket": "suyaa-34ce3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169178701488:android:4dca680b32f7dfbcfd6575",
+        "android_client_info": {
+          "package_name": "app.suyaa.suyaa_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169178701488-ka6iuk3dqkie23h2rpu9h9tmjggugq2q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNEEjqoqt1W6o3niX0RAybT5PxGp0WwPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169178701488-ka6iuk3dqkie23h2rpu9h9tmjggugq2q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "169178701488-7a53kigek62ruo15aef9pabki6fs4scp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.suyaa.ios",
+                "app_store_id": "1632365453"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

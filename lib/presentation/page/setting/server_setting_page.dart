@@ -56,7 +56,7 @@ class _ServerSettingPageState extends State<ServerSettingPage> {
               child: const Text('OK'),
               onPressed: () {
                 var domain = domainTc.text;
-                if (domain.isEmpty) domain = 'localhost';
+                if (domain.isEmpty) domain = defaultDomain;
                 context.read<ServerSetting>().updateDomain(domain, portTc.text);
                 // 本来ならAuthのコンストラクタ内で実行されるが、
                 // 現在はサーバ情報を最初に設定させるため、ここで初期化処理を再実行している

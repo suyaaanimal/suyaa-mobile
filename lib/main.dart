@@ -133,6 +133,14 @@ class _MyAppState extends State<MyApp> {
                   );
                 },
               ),
+              GoRoute(
+                path: '${HomePagesIndex.sleepHistory.name}/:sid',
+                name: 'dairySleep',
+                builder: (context, state) {
+                  final sid = state.params['sid']!;
+                  return DailySleep(key: state.pageKey, sid: sid);
+                },
+              ),
             ],
           ),
           GoRoute(

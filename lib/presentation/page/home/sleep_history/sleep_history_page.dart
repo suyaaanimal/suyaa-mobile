@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suyaa_mobile/application/controller/user.dart';
 import 'package:suyaa_mobile/presentation/component/painter/sleep_bar.dart';
+import 'package:suyaa_mobile/presentation/page/home/utils/page_enum.dart';
 
 class SleepHistoryPage extends StatefulWidget {
   const SleepHistoryPage({Key? key}) : super(key: key);
@@ -31,7 +32,8 @@ class _SleepHistoryPageState extends State<SleepHistoryPage> {
                           final year = date.year;
                           final month = date.month.toString().padLeft(2, '0');
                           final day = date.day.toString().padLeft(2, '0');
-                          context.push('/home/sleepHistory/$year$month$day');
+                          context.push(
+                              '/home/${HomePagesIndex.sleepHistory.name}/$year$month$day');
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),

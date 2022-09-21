@@ -20,10 +20,12 @@ import 'package:suyaa_mobile/infrastructure/service/shared_preferences.dart';
 import 'package:suyaa_mobile/presentation/component/unbackable.dart';
 import 'package:suyaa_mobile/presentation/page/auth/signin_page.dart';
 import 'package:suyaa_mobile/presentation/page/home/home.dart';
+import 'package:suyaa_mobile/presentation/page/home/home_navigation.dart';
 import 'package:suyaa_mobile/presentation/page/home/item_shop.dart';
 import 'package:suyaa_mobile/presentation/page/home/sleep_history/daily_sleep.dart';
 import 'package:suyaa_mobile/presentation/page/home/sleep_history/sleep_history_page.dart';
 import 'package:suyaa_mobile/presentation/page/home/timer.dart';
+import 'package:suyaa_mobile/presentation/page/home/utils/page_enum.dart';
 import 'package:suyaa_mobile/presentation/page/loading.dart';
 import 'package:suyaa_mobile/presentation/page/opening/opening_page.dart';
 import 'package:suyaa_mobile/presentation/page/setting/server_setting_page.dart';
@@ -99,6 +101,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final _router = GoRouter(
+    debugLogDiagnostics: true,
     initialLocation: !debug ? '/' : '/setting/server',
     routes: [
       GoRoute(
@@ -118,36 +121,17 @@ class _MyAppState extends State<MyApp> {
             redirect: (state) => '/home/home',
             routes: [
               GoRoute(
-                path: 'sleepHistory',
-                name: 'sleepHistory',
-                builder: (context, state) =>
-                    SleepHistoryPage(key: state.pageKey),
-                routes: [
-                  GoRoute(
-                    path: ':sid',
-                    name: 'dairySleep',
-                    builder: (context, state) {
-                      final sid = state.params['sid']!;
-                      return DailySleep(key: state.pageKey, sid: sid);
-                    },
-                  ),
-                ],
-              ),
-              GoRoute(
-                path: 'home',
-                name: 'home',
-                builder: (context, state) =>
-                    Unbackable(key: state.pageKey, child: const MainPage()),
-              ),
-              GoRoute(
-                path: 'itemShop',
-                name: 'itemShop',
-                builder: (context, state) => ItemShop(key: state.pageKey),
-              ),
-              GoRoute(
-                path: 'timer',
-                name: 'timer',
-                builder: (context, state) => Timer(key: state.pageKey),
+                path: ':page',
+                builder: (context, state) {
+                  final index = HomePagesIndex.values.firstWhere(
+                    (element) => element.name == state.params['page'],
+                    orElse: () => throw Exception('No such home page.'),
+                  );
+                  return HomeNavigationScreen(
+                    key: ValueKey(index),
+                    index: index,
+                  );
+                },
               ),
             ],
           ),

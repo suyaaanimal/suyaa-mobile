@@ -14,33 +14,34 @@ class SleepHistoryPage extends StatefulWidget {
 class _SleepHistoryPageState extends State<SleepHistoryPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: FutureBuilder(
-          future: context.read<User>().fetchSleepData(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasError) {
-              return Text('Something went wrong:${snapshot.error}');
-            }
-            if (snapshot.hasData) {
-              final user = context.read<User>();
-              final sleepCalender = user.sleepCalender;
-              return ListView(
-                children: user.sleepDataKeys
-                    .map((date) => GestureDetector(
-                          onTap: () {
-                            final year = date.year;
-                            final month = date.month.toString().padLeft(2, '0');
-                            final day = date.day.toString().padLeft(2, '0');
-                            context.push('/home/sleepHistory/$year$month$day');
-                          },
+    return Center(
+      child: FutureBuilder(
+        future: context.read<User>().fetchSleepData(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong:${snapshot.error}');
+          }
+          if (snapshot.hasData) {
+            final user = context.read<User>();
+            final sleepCalender = user.sleepCalender;
+            return ListView(
+              children: user.sleepDataKeys
+                  .map((date) => GestureDetector(
+                        onTap: () {
+                          final year = date.year;
+                          final month = date.month.toString().padLeft(2, '0');
+                          final day = date.day.toString().padLeft(2, '0');
+                          context.push('/home/sleepHistory/$year$month$day');
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '${date.month}月${date.day}日',
-                                style: const TextStyle(fontSize: 19),
+                                '${date.month}/${date.day}',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.white),
                               ),
                               Expanded(
                                   child: CustomPaint(
@@ -48,13 +49,13 @@ class _SleepHistoryPageState extends State<SleepHistoryPage> {
                               ))
                             ],
                           ),
-                        ))
-                    .toList(),
-              );
-            }
-            return const Text('Loading');
-          },
-        ),
+                        ),
+                      ))
+                  .toList(),
+            );
+          }
+          return const Text('Loading');
+        },
       ),
     );
   }

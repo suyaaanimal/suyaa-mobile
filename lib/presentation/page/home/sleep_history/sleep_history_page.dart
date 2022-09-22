@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suyaa_mobile/application/controller/user.dart';
 import 'package:suyaa_mobile/presentation/component/painter/sleep_bar.dart';
+import 'package:suyaa_mobile/presentation/component/sleep_noon_slider.dart';
 import 'package:suyaa_mobile/presentation/page/home/utils/page_enum.dart';
 
 class SleepHistoryPage extends StatefulWidget {
@@ -75,9 +76,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                             const SizedBox(width: dateWidth),
                             SizedBox(
                               width: sleepBarWidth,
-                              child: Slider(
-                                  min: -0.5,
-                                  max: 0.5,
+                              child: SleepNoonSlider(
                                   value: noonLocation,
                                   onChanged: (value) {
                                     setState(() {
@@ -153,6 +152,11 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                                                     date.year,
                                                     date.month,
                                                     date.day + 1)] ??
+                                                {},
+                                            ...sleepCalender[DateTime(
+                                                    date.year,
+                                                    date.month,
+                                                    date.day + 2)] ??
                                                 {},
                                           }),
                                         ))

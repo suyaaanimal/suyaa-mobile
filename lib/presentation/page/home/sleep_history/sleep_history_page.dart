@@ -59,29 +59,9 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
               child: Stack(
                 children: [
                   GestureDetector(
-                    onHorizontalDragUpdate: (details) {
-                      setState(() => tookOff = false);
-                      final horizontalRate =
-                          (details.localPosition.dx - dateWidth) /
-                              sleepBarWidth;
-                      if (!(0 < horizontalRate && horizontalRate < 1.0)) return;
-                      if (details.delta.dx > 10) {
-                        tossTimeToLeft = false;
-                      } else if (details.delta.dx < -10) {
-                        tossTimeToLeft = true;
-                      }
-                      final currentMin = TimeOfDay.minutesPerHour *
-                          TimeOfDay.hoursPerDay *
-                          horizontalRate;
-                      setState(() {
-                        draggingTime = TimeOfDay(
-                            hour: currentMin ~/ 60,
-                            minute: currentMin.toInt() % 60);
-                        draggingHeight = details.localPosition.dy;
-                      });
-                      WidgetsBinding.instance
-                          .addPostFrameCallback(_afterLayout);
-                    },
+                    onHorizontalDragUpdate: (details) =>
+                        _onHorizontalDragUpdate(
+                            details, dateWidth, sleepBarWidth),
                     onHorizontalDragEnd: (details) =>
                         setState(() => tookOff = true),
                     child: ListView(
@@ -131,14 +111,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                                     sleepBarWidth),
                         height: constraints.maxHeight,
                         duration: const Duration(milliseconds: 300),
-                        onEnd: () => setState(() {
-                              if (tossTimeToLeft == null) return;
-                              setState(() {
-                                draggingTime = null;
-                                draggingHeight = null;
-                                tossTimeToLeft = null;
-                              });
-                            }),
+                        onEnd: () => _onAnimationEnd(),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -168,5 +141,34 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
     final month = date.month.toString().padLeft(2, '0');
     final day = date.day.toString().padLeft(2, '0');
     context.push('/home/${HomePagesIndex.sleepHistory.name}/$year$month$day');
+  }
+
+  void _onHorizontalDragUpdate(details, dateWidth, sleepBarWidth) {
+    setState(() => tookOff = false);
+    final horizontalRate =
+        (details.localPosition.dx - dateWidth) / sleepBarWidth;
+    if (!(0 < horizontalRate && horizontalRate < 1.0)) return;
+    if (details.delta.dx > 10) {
+      tossTimeToLeft = false;
+    } else if (details.delta.dx < -10) {
+      tossTimeToLeft = true;
+    }
+    final currentMin =
+        TimeOfDay.minutesPerHour * TimeOfDay.hoursPerDay * horizontalRate;
+    setState(() {
+      draggingTime =
+          TimeOfDay(hour: currentMin ~/ 60, minute: currentMin.toInt() % 60);
+      draggingHeight = details.localPosition.dy;
+    });
+    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+  }
+
+  _onAnimationEnd() {
+    if (tossTimeToLeft == null) return;
+    setState(() {
+      draggingTime = null;
+      draggingHeight = null;
+      tossTimeToLeft = null;
+    });
   }
 }

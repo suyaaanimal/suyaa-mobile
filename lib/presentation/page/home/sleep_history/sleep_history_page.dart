@@ -87,6 +87,36 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                             ),
                           ],
                         ),
+                        Row(
+                          children: [
+                            const SizedBox(width: dateWidth),
+                            Expanded(
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _draggingLocationTime(0.0)
+                                          .format(context),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                    Text(
+                                      _draggingLocationTime(0.5)
+                                          .format(context),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                    Text(
+                                      _draggingLocationTime(1.0)
+                                          .format(context),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    )
+                                  ]),
+                            )
+                          ],
+                        ),
                         ...user.sleepDataKeys
                             .map((date) => GestureDetector(
                                   behavior: HitTestBehavior.opaque,
@@ -148,24 +178,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              (() {
-                                double rate = draggingLocation! - noonLocation;
-                                if (rate < 0) {
-                                  rate += 1;
-                                } else if (rate > 1) {
-                                  rate -= 1;
-                                }
-                                if (!(0 <= rate && rate <= 1)) {
-                                  debugPrint('error:$rate');
-                                  return const TimeOfDay(hour: 0, minute: 0);
-                                }
-                                int min = (rate *
-                                        TimeOfDay.minutesPerHour *
-                                        TimeOfDay.hoursPerDay)
-                                    .toInt();
-                                return TimeOfDay(
-                                    hour: min ~/ 60, minute: min % 60);
-                              }())
+                              _draggingLocationTime(draggingLocation!)
                                   .format(context),
                               key: timeTextKey,
                               style: const TextStyle(color: Colors.white),
@@ -217,5 +230,20 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
       draggingHeight = null;
       tossTimeToLeft = null;
     });
+  }
+
+  TimeOfDay _draggingLocationTime(double location) {
+    double rate = location - noonLocation;
+    if (rate < 0) {
+      rate += 1;
+    } else if (rate > 1) {
+      rate -= 1;
+    }
+    if (!(0 <= rate && rate <= 1)) {
+      debugPrint('error:$rate');
+      return const TimeOfDay(hour: 0, minute: 0);
+    }
+    int min = (rate * TimeOfDay.minutesPerHour * TimeOfDay.hoursPerDay).toInt();
+    return TimeOfDay(hour: min ~/ 60, minute: min % 60);
   }
 }

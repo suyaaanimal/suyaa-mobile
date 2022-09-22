@@ -19,6 +19,25 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
   bool? tossTimeToLeft;
   bool tookOff = true;
   double? draggingHeight;
+  final timeTextKey = GlobalKey();
+  double timeTextWidth = 20;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Size _getSize() {
+    final RenderBox? renderBoxRed =
+        timeTextKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBoxRed == null) return Size.zero;
+    return renderBoxRed.size;
+  }
+
+  _afterLayout(_) {
+    timeTextWidth = _getSize().width;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +52,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
           final sleepCalender = user.sleepCalender;
           return LayoutBuilder(builder: (context, constraints) {
             final width = constraints.maxWidth;
-            const dateWidth = 30.0;
+            const dateWidth = 40.0;
             final sleepBarWidth = width - dateWidth;
             return SizedBox(
               width: width,
@@ -60,6 +79,8 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                             minute: currentMin.toInt() % 60);
                         draggingHeight = details.localPosition.dy;
                       });
+                      WidgetsBinding.instance
+                          .addPostFrameCallback(_afterLayout);
                     },
                     onHorizontalDragEnd: (details) =>
                         setState(() => tookOff = true),
@@ -78,9 +99,10 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                                         width: dateWidth,
                                         alignment: Alignment.centerLeft,
                                         child: Text(
-                                          '${date.month}/${date.day}',
+                                          '${date.month.toString().padLeft(2)}/${date.day.toString().padLeft(2)}',
                                           style: const TextStyle(
                                               fontSize: 12,
+                                              fontWeight: FontWeight.bold,
                                               color: Colors.white),
                                         ),
                                       ),
@@ -99,7 +121,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                   if (draggingTime != null)
                     AnimatedPositioned(
                         top: max(0, draggingHeight! - 120.0),
-                        left: 10 +
+                        left: timeTextWidth / 2 +
                             (tossTimeToLeft != null && tookOff == true
                                 ? (tossTimeToLeft! ? -10 : width + 10)
                                 : (draggingTime!.hour * 60.0 +
@@ -122,6 +144,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                           children: [
                             Text(
                               draggingTime!.format(context),
+                              key: timeTextKey,
                               style: const TextStyle(color: Colors.white),
                             ),
                             Expanded(

@@ -1,2 +1,2 @@
-const defaultDomain = '192.168.168.53';
+const defaultDomain = 'localhost';
 const defaultPort = 3000;

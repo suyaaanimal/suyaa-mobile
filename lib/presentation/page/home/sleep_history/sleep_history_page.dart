@@ -15,12 +15,16 @@ class SleepHistoryPage extends StatefulWidget {
 }
 
 class SleepHistoryPageState extends State<SleepHistoryPage> {
+  // TODO: 左右スライドの時の時間が変わらない
   TimeOfDay? draggingTime;
   bool? tossTimeToLeft;
   bool tookOff = true;
   double? draggingHeight;
   final timeTextKey = GlobalKey();
   double timeTextWidth = 20;
+
+  /// -1.0 <= noonLocation <= 1.0
+  double noonLocation = 0;
 
   @override
   void initState() {
@@ -65,37 +69,69 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                     onHorizontalDragEnd: (details) =>
                         setState(() => tookOff = true),
                     child: ListView(
-                      children: user.sleepDataKeys
-                          .map((date) => GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () => _onTap(date),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: dateWidth,
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          '${date.month.toString().padLeft(2)}/${date.day.toString().padLeft(2)}',
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
+                      children: [
+                        Row(
+                          children: [
+                            const SizedBox(width: dateWidth),
+                            SizedBox(
+                              width: sleepBarWidth,
+                              child: Slider(
+                                  min: -0.5,
+                                  max: 0.5,
+                                  value: noonLocation,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      noonLocation = value;
+                                    });
+                                  }),
+                            ),
+                          ],
+                        ),
+                        ...user.sleepDataKeys
+                            .map((date) => GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () => _onTap(date),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: dateWidth,
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${date.month.toString().padLeft(2)}/${date.day.toString().padLeft(2)}',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                      Expanded(
-                                          child: CustomPaint(
-                                        painter: SleepBarPainter(
-                                            sleepCalender[date]!),
-                                      ))
-                                    ],
+                                        Expanded(
+                                            child: CustomPaint(
+                                          painter: SleepBarPainter(
+                                              noonLocation, date, {
+                                            ...sleepCalender[DateTime(
+                                                    date.year,
+                                                    date.month,
+                                                    date.day - 1)] ??
+                                                {},
+                                            ...sleepCalender[date] ?? {},
+                                            ...sleepCalender[DateTime(
+                                                    date.year,
+                                                    date.month,
+                                                    date.day + 1)] ??
+                                                {},
+                                          }),
+                                        ))
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ))
-                          .toList(),
+                                ))
+                            .toList()
+                      ],
                     ),
                   ),
                   if (draggingTime != null)

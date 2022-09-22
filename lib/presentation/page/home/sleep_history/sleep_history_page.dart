@@ -15,8 +15,8 @@ class SleepHistoryPage extends StatefulWidget {
 }
 
 class SleepHistoryPageState extends State<SleepHistoryPage> {
-  // TODO: 左右スライドの時の時間が変わらない
-  TimeOfDay? draggingTime;
+  /// 0.0 <= draggingLocation <= 1.0
+  double? draggingLocation;
   bool? tossTimeToLeft;
   bool tookOff = true;
   double? draggingHeight;
@@ -134,17 +134,13 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                       ],
                     ),
                   ),
-                  if (draggingTime != null)
+                  if (draggingLocation != null)
                     AnimatedPositioned(
                         top: max(0, draggingHeight! - 120.0),
                         left: timeTextWidth / 2 +
                             (tossTimeToLeft != null && tookOff == true
                                 ? (tossTimeToLeft! ? -10 : width + 10)
-                                : (draggingTime!.hour * 60.0 +
-                                        draggingTime!.minute) /
-                                    (TimeOfDay.minutesPerHour *
-                                        TimeOfDay.hoursPerDay) *
-                                    sleepBarWidth),
+                                : draggingLocation! * sleepBarWidth),
                         height: constraints.maxHeight,
                         duration: const Duration(milliseconds: 300),
                         onEnd: () => _onAnimationEnd(),
@@ -152,7 +148,25 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              draggingTime!.format(context),
+                              (() {
+                                double rate = draggingLocation! - noonLocation;
+                                if (rate < 0) {
+                                  rate += 1;
+                                } else if (rate > 1) {
+                                  rate -= 1;
+                                }
+                                if (!(0 <= rate && rate <= 1)) {
+                                  debugPrint('error:$rate');
+                                  return const TimeOfDay(hour: 0, minute: 0);
+                                }
+                                int min = (rate *
+                                        TimeOfDay.minutesPerHour *
+                                        TimeOfDay.hoursPerDay)
+                                    .toInt();
+                                return TimeOfDay(
+                                    hour: min ~/ 60, minute: min % 60);
+                              }())
+                                  .format(context),
                               key: timeTextKey,
                               style: const TextStyle(color: Colors.white),
                             ),
@@ -189,11 +203,8 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
     } else if (details.delta.dx < -10) {
       tossTimeToLeft = true;
     }
-    final currentMin =
-        TimeOfDay.minutesPerHour * TimeOfDay.hoursPerDay * horizontalRate;
     setState(() {
-      draggingTime =
-          TimeOfDay(hour: currentMin ~/ 60, minute: currentMin.toInt() % 60);
+      draggingLocation = horizontalRate;
       draggingHeight = details.localPosition.dy;
     });
     WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
@@ -202,7 +213,7 @@ class SleepHistoryPageState extends State<SleepHistoryPage> {
   _onAnimationEnd() {
     if (tossTimeToLeft == null) return;
     setState(() {
-      draggingTime = null;
+      draggingLocation = null;
       draggingHeight = null;
       tossTimeToLeft = null;
     });

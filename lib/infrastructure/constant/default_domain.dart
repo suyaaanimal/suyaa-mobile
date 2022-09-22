@@ -1,2 +1,2 @@
-const defaultDomain = '172.20.10.2';
+const defaultDomain = '192.168.168.53';
 const defaultPort = 3000;

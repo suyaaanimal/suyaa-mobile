@@ -43,6 +43,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
   Widget build(BuildContext context) {
     print('build');
     print(currentIndex.name);
+    final sleepHistoryPageKey = GlobalObjectKey<SleepHistoryPageState>(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 33),
       body: SafeArea(child: () {
@@ -52,7 +53,9 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
           case HomePagesIndex.home:
             return const MainPage();
           case HomePagesIndex.sleepHistory:
-            return const SleepHistoryPage();
+            return SleepHistoryPage(
+              key: sleepHistoryPageKey,
+            );
           case HomePagesIndex.itemShop:
             return const ItemShop();
           case HomePagesIndex.settings:

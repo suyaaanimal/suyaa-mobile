@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,56 +11,139 @@ class SleepHistoryPage extends StatefulWidget {
   const SleepHistoryPage({Key? key}) : super(key: key);
 
   @override
-  State<SleepHistoryPage> createState() => _SleepHistoryPageState();
+  State<SleepHistoryPage> createState() => SleepHistoryPageState();
 }
 
-class _SleepHistoryPageState extends State<SleepHistoryPage> {
+class SleepHistoryPageState extends State<SleepHistoryPage> {
+  TimeOfDay? draggingTime;
+  bool? tossTimeToLeft;
+  bool tookOff = true;
+  double? draggingHeight;
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder(
-        future: context.read<User>().fetchSleepData(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Something went wrong:${snapshot.error}');
-          }
-          if (snapshot.hasData) {
-            final user = context.read<User>();
-            final sleepCalender = user.sleepCalender;
-            return ListView(
-              children: user.sleepDataKeys
-                  .map((date) => GestureDetector(
-                        onTap: () {
-                          final year = date.year;
-                          final month = date.month.toString().padLeft(2, '0');
-                          final day = date.day.toString().padLeft(2, '0');
-                          context.push(
-                              '/home/${HomePagesIndex.sleepHistory.name}/$year$month$day');
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '${date.month}/${date.day}',
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.white),
-                              ),
-                              Expanded(
-                                  child: CustomPaint(
-                                painter: SleepBarPainter(sleepCalender[date]!),
+    return FutureBuilder(
+      future: context.read<User>().fetchSleepData(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong:${snapshot.error}');
+        }
+        if (snapshot.hasData) {
+          final user = context.read<User>();
+          final sleepCalender = user.sleepCalender;
+          return LayoutBuilder(builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            const dateWidth = 30.0;
+            final sleepBarWidth = width - dateWidth;
+            return SizedBox(
+              width: width,
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    onHorizontalDragUpdate: (details) {
+                      setState(() => tookOff = false);
+                      final horizontalRate =
+                          (details.localPosition.dx - dateWidth) /
+                              sleepBarWidth;
+                      if (!(0 < horizontalRate && horizontalRate < 1.0)) return;
+                      if (details.delta.dx > 10) {
+                        tossTimeToLeft = false;
+                      } else if (details.delta.dx < -10) {
+                        tossTimeToLeft = true;
+                      }
+                      final currentMin = TimeOfDay.minutesPerHour *
+                          TimeOfDay.hoursPerDay *
+                          horizontalRate;
+                      setState(() {
+                        draggingTime = TimeOfDay(
+                            hour: currentMin ~/ 60,
+                            minute: currentMin.toInt() % 60);
+                        draggingHeight = details.localPosition.dy;
+                      });
+                    },
+                    onHorizontalDragEnd: (details) =>
+                        setState(() => tookOff = true),
+                    child: ListView(
+                      children: user.sleepDataKeys
+                          .map((date) => GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () => _onTap(date),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: dateWidth,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          '${date.month}/${date.day}',
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      Expanded(
+                                          child: CustomPaint(
+                                        painter: SleepBarPainter(
+                                            sleepCalender[date]!),
+                                      ))
+                                    ],
+                                  ),
+                                ),
                               ))
-                            ],
-                          ),
-                        ),
-                      ))
-                  .toList(),
+                          .toList(),
+                    ),
+                  ),
+                  if (draggingTime != null)
+                    AnimatedPositioned(
+                        top: max(0, draggingHeight! - 120.0),
+                        left: 10 +
+                            (tossTimeToLeft != null && tookOff == true
+                                ? (tossTimeToLeft! ? -10 : width + 10)
+                                : (draggingTime!.hour * 60.0 +
+                                        draggingTime!.minute) /
+                                    (TimeOfDay.minutesPerHour *
+                                        TimeOfDay.hoursPerDay) *
+                                    sleepBarWidth),
+                        height: constraints.maxHeight,
+                        duration: const Duration(milliseconds: 300),
+                        onEnd: () => setState(() {
+                              if (tossTimeToLeft == null) return;
+                              setState(() {
+                                draggingTime = null;
+                                draggingHeight = null;
+                                tossTimeToLeft = null;
+                              });
+                            }),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              draggingTime!.format(context),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            Expanded(
+                              child: Container(
+                                  width: 1, height: 100, color: Colors.white),
+                            ),
+                          ],
+                        ))
+                ],
+              ),
             );
-          }
-          return const Text('Loading');
-        },
-      ),
+          });
+        }
+        return const Text('Loading');
+      },
     );
+  }
+
+  void _onTap(DateTime date) {
+    final year = date.year;
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    context.push('/home/${HomePagesIndex.sleepHistory.name}/$year$month$day');
   }
 }

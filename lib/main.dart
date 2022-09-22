@@ -220,6 +220,7 @@ class _MyAppState extends State<MyApp> {
       StateNotifierProvider<Auth, AuthState>.value(
         value: auth,
         child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           routeInformationProvider: _router.routeInformationProvider,
           routeInformationParser: _router.routeInformationParser,
           routerDelegate: _router.routerDelegate,

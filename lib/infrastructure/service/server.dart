@@ -23,7 +23,7 @@ class Server {
   }
 
   Future<http.Response> _get(String path, String accessToken) =>
-      http.get(Uri.parse('http://$domain$path'),
+      http.get(Uri.parse('https://$domain$path'),
           headers: {"Authorization": "Bearer $accessToken"});
 
   Future<http.Response> _post({
@@ -32,10 +32,10 @@ class Server {
     String? accessToken,
   }) =>
       accessToken == null
-          ? http.post(Uri.parse('http://$domain$path'),
+          ? http.post(Uri.parse('https://$domain$path'),
               body: _params(params),
               headers: {"Content-Type": "application/x-www-form-urlencoded"})
-          : http.post(Uri.parse('http://$domain$path'),
+          : http.post(Uri.parse('https://$domain$path'),
               headers: {"Authorization": "Bearer $accessToken"});
 
   bool _success(int status) {

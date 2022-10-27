@@ -98,7 +98,7 @@ class Server {
 
   Future<Map<String, dynamic>> fetchSleepData(String token,
       {bool mock = false}) async {
-    if (debug && mock) {
+    if (debug || mock) {
       await Future.delayed(const Duration(seconds: 1));
       return sleepMockData;
     }

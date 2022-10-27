@@ -45,6 +45,7 @@ class Server {
     return false;
   }
 
+  // TODO(atahatah) 返り値をアクセストークンだけでなく、成長度合いなども含めるように
   Future<String> signin(String name, String password) async {
     String? accessToken;
     final response = await _post(
@@ -98,7 +99,7 @@ class Server {
 
   Future<Map<String, dynamic>> fetchSleepData(String token,
       {bool mock = false}) async {
-    if (debug && mock) {
+    if (debug || mock) {
       await Future.delayed(const Duration(seconds: 1));
       return sleepMockData;
     }

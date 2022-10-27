@@ -4,9 +4,11 @@ import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suyaa_mobile/application/controller/auth.dart';
+import 'package:suyaa_mobile/application/controller/monster.dart';
 import 'package:suyaa_mobile/application/controller/server_setting.dart';
 import 'package:suyaa_mobile/application/controller/user.dart';
 import 'package:suyaa_mobile/application/state/auth.dart';
+import 'package:suyaa_mobile/application/state/monster.dart';
 import 'package:suyaa_mobile/application/state/user.dart';
 import 'package:suyaa_mobile/firebase_options.dart';
 import 'package:suyaa_mobile/infrastructure/constant/debug.dart';
@@ -85,6 +87,8 @@ void main() async {
                               context.read<AuthRepository>().userStream.stream,
                           userRepository: context.read<UserRepository>(),
                         )),
+                StateNotifierProvider<Monster, MonsterState>(
+                    create: ((context) => Monster()))
               ], child: const MyApp());
             }));
       })));

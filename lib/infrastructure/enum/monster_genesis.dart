@@ -1,17 +1,17 @@
 enum MonsterGenesis {
   /// 胚
-  embryo,
+  embryo('asset/seichou/egg.png'),
 
   /// 幼生
-  larva,
+  larva('asset/seichou/youji.png'),
 
   /// 亜成体
-  subadult,
+  subadult('asset/seichou/shouni.png'),
 
   /// 成体
-  adult,
-
-  /// 死後
-  dead,
+  adult('asset/seichou/otona.png'),
   ;
+
+  final String assetPath;
+  const MonsterGenesis(this.assetPath);
 }

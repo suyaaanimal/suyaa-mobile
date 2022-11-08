@@ -47,6 +47,7 @@ class AuthRepository {
       return newUser;
     }
 
+    //TODO(atahatah) アクセストークン以外も返ってくるようになる
     final accessToken = await _server.signin(name, password);
     final newUser = LoggedInUserInfo(username: name, accessToken: accessToken);
     userStream.sink.add(newUser);

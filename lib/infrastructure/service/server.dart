@@ -45,6 +45,7 @@ class Server {
     return false;
   }
 
+  // TODO(atahatah) 返り値をアクセストークンだけでなく、成長度合いなども含めるように
   Future<String> signin(String name, String password) async {
     String? accessToken;
     final response = await _post(

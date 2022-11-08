@@ -14,15 +14,15 @@ class SettingsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-              onPressed: () => maskModel.connect(),
-              child: const Text('Metamaskに接続')),
+          // ElevatedButton(
+          //     onPressed: () => maskModel.connect(),
+          //     child: const Text('Metamaskに接続')),
           ElevatedButton(
               onPressed: () => auth.connectFitbit(),
               child: const Text('fitbitに連携')),
-          ElevatedButton(
-              onPressed: auth.deleteCashedAccessToken,
-              child: const Text('アクセストークンの削除')),
+          // ElevatedButton(
+          //     onPressed: auth.deleteCashedAccessToken,
+          //     child: const Text('アクセストークンの削除')),
           ElevatedButton(
             onPressed: auth.signOut,
             child: const Text('サインアウト'),

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 enum HomePagesIndex {
-  timer(
-    icon: Icon(Icons.timer),
+  // timer(
+  //   icon: Icon(Icons.timer),
+  // ),
+  sleepHistory(
+    icon: Icon(Icons.night_shelter),
   ),
   home(
     icon: Icon(Icons.home),
   ),
-  sleepHistory(
-    icon: Icon(Icons.night_shelter),
-  ),
-  itemShop(
-    icon: Icon(Icons.toys),
-  ),
+  // itemShop(
+  //   icon: Icon(Icons.toys),
+  // ),
   settings(
     icon: Icon(Icons.settings),
   ),

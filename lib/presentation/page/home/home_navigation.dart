@@ -48,16 +48,16 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
       backgroundColor: const Color.fromARGB(255, 0, 0, 33),
       body: SafeArea(child: () {
         switch (currentIndex) {
-          case HomePagesIndex.timer:
-            return const TimerScreen();
+          // case HomePagesIndex.timer:
+          //   return const TimerScreen();
           case HomePagesIndex.home:
             return const MainPage();
           case HomePagesIndex.sleepHistory:
             return SleepHistoryPage(
               key: sleepHistoryPageKey,
             );
-          case HomePagesIndex.itemShop:
-            return const ItemShop();
+          // case HomePagesIndex.itemShop:
+          //   return const ItemShop();
           case HomePagesIndex.settings:
             return const SettingsScreen();
         }
